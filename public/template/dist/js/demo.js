@@ -35,7 +35,7 @@
     //- PIE CHART -
     //-------------
     // Get context with jQuery - using jQuery's .get() method.
-    var pieChartCanvasHrm = $('#pieChartHrm').get(0).getContext('2d')
+   /*  var pieChartCanvasHrm = $('#pieChartHrm').get(0).getContext('2d')
     console.log(pieChartCanvasHrm);
     var pieDataHrm        = donutDataHrm;
     var pieOptionsHrm     = {
@@ -48,7 +48,7 @@
       type: 'pie',
       data: pieDataHrm,
       options: pieOptionsHrm
-    })
+    }) */
 
     /////////////////////////////////////////////////////////////////////
 
@@ -56,7 +56,7 @@
     //- PIE CHART -
     //-------------
     // Get context with jQuery - using jQuery's .get() method.
-    var pieChartCanvasLead = $('#pieChartLead').get().getContext('2d')
+   /*  var pieChartCanvasLead = $('#pieChartLead').get().getContext('2d')
     console.log(pieChartCanvasLead);
     var pieDataLead        = donutDataLead;
     var pieOptionsLead     = {
@@ -69,13 +69,13 @@
       type: 'pie',
       data: pieDataLead,
       options: pieOptionsLead
-    })
+    }) */
 
     /////////////////////////////////////////////////////////////////////
 
 
 
-  var barChartCanvas = $('#barChart').get(0).getContext('2d')
+ /*  var barChartCanvas = $('#barChart').get(0).getContext('2d')
     var barChartData = $.extend(true, {}, areaChartData)
     var temp0 = areaChartData.datasets[0]
     var temp1 = areaChartData.datasets[1]
@@ -92,14 +92,14 @@
       type: 'bar',
       data: barChartData,
       options: barChartOptions
-    })
+    }) */
 
 
     /////////////////////////////////////////////////////////////////////
 
 
   
-  var barChartCanvas = $('#barCharts').get(0).getContext('2d')
+  /* var barChartCanvas = $('#barCharts').get(0).getContext('2d')
     var barChartData = $.extend(true, {}, areaChartData)
     var temp0 = areaChartDataSa.datasets[0]
     var temp1 = areaChartDataSa.datasets[1]
@@ -116,10 +116,10 @@
       type: 'bar',
       data: barChartData,
       options: barChartOptions
-    })
+    }) */
 
 //////////////////////////////////////////////////////////////////////////
-  var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+/*   var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
   var pieData        = donutData;
   var pieOptions     = {
     maintainAspectRatio : false,
@@ -136,7 +136,7 @@
     data: pieData,
     options: pieOptions
   })
-
+ */
  
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1)

@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=9">
   <meta name="csrf-token" content="{{ csrf_token() }}" />
   <title>Admin | Dashboard</title>
 
@@ -26,7 +27,9 @@
     <link rel="stylesheet" href="/template/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="/template/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 
-
+ <!-- Select2 -->
+ <link rel="stylesheet" href="/template/plugins/select2/css/select2.min.css">
+ <link rel="stylesheet" href="/template/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/template/dist/css/adminlte.min.css">
   <!-- overlayScrollbars -->
@@ -73,7 +76,7 @@
   <div class="cord-body">
 
     <div class="mr-3 ml-3 alert alert-danger alert-dismissible fade show" role="alert">
-      <strong>Success!</strong>   {{ session()->get('failed') }}
+      <strong>!</strong>   {{ session()->get('failed') }}
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -120,6 +123,8 @@
 <!-- ChartJS -->
 <script src="/template/plugins/chart.js/Chart.min.js"></script>
 <!-- Sparkline -->
+<script src="/template/dist/js/chart.js"></script>  
+<script src="/template/plugins/select2/js/select2.full.min.js"></script>
 <script src="/template/plugins/sparklines/sparkline.js"></script>
 <!-- JQVMap -->
 <script src="/template/plugins/jqvmap/jquery.vmap.min.js"></script>
@@ -160,5 +165,16 @@
 
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="/template/dist/js/pages/dashboard.js"></script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2();
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+
+  
+  });
+  </script>
 </body>
 </html>

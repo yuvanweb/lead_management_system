@@ -40,22 +40,47 @@ use Illuminate\Support\Facades\Auth;
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          
+          @php
+         /*  echo Session()->get('role_access')[0]['role_name'];
+          echo"<pre>";
+            print_r(Session()->get('role_access')); */
+          @endphp
+
+
           <li class="nav-item">
             <a href="/dashboard " class="{{ request()->is('dashboard') ? 'active' : '' }} nav-link ">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>Dashboard </p>
             </a>
           </li> 
-          <li class="nav-item">
-            <a href="/roll" class="{{ request()->is('roll') ? 'active' : '' }} nav-link">
-              <i class="far fa-user nav-icon"></i>
-              <p>
-                Role Management
-         
-              </p>
-            </a>
-          </li> <li class="nav-item">
+
+@if (!isset(Session()->get('role_access')[0]['role_management']))
+@php
+  return redirect('/test-session');
+@endphp
+@endif
+@if (Session()->get('role_access')[0]['role_management']=="" || Session()->get('role_access')[0]['user_management']=="" || Session()->get('role_access')[0]['lead_management']==""|| Session()->get('role_access')[0]['lead_management']=="")
+@php
+  return redirect('/test-session');
+@endphp
+@endif
+
+
+@if (Session()->get('role_access')[0]['role_management']==1)
+<li class="nav-item">
+  <a href="/roll" class="{{ request()->is('roll') ? 'active' : '' }} nav-link">
+    <i class="far fa-user nav-icon"></i>
+    <p>
+      Role Management
+
+    </p>
+  </a>
+</li> 
+@endif
+
+@if (Session()->get('role_access')[0]['user_management']==1)
+@endif
+        <li class="nav-item">
             <a href="/user" class="{{ request()->is('user') ? 'active' : '' }} nav-link">
               <i class="far fa-user nav-icon"></i>
               <p>
@@ -74,6 +99,7 @@ use Illuminate\Support\Facades\Auth;
               </p>
             </a>
           </li>-->
+          @if (Session()->get('role_access')[0]['lead_management']==1)
           <li class="nav-item">
             <a href="#" class="nav-link {{ request()->is('lead-reports') ? 'active' : '' }}">
               <i class="nav-icon fas fa-copy"></i>
@@ -97,17 +123,19 @@ use Illuminate\Support\Facades\Auth;
                   <p>Lead details </p>
                 </a>
               </li>
-              <li class="nav-item">
+             <!-- <li class="nav-item">
                 <a href="/lead-reports" class="{{ request()->is('lead-reports') ? 'active' : '' }} nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Lead Report</p>
                 </a>
-              </li>
+              </li>-->
             
             </ul>
           </li>
-
-
+          @endif
+    
+          
+          @if (Session()->get('role_access')[0]['sales_management']==1)
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-chart-pie"></i>
@@ -129,15 +157,21 @@ use Illuminate\Support\Facades\Auth;
                   <p>Sales Details</p>
                 </a>
               </li>
-              <li class="nav-item">
+             {{--  <li class="nav-item">
                 <a href="/sales-reports" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Sales Report</p>
                 </a>
-              </li>
+              </li> --}}
              
             </ul>
           </li>
+          @endif
+
+        
+
+          @if (Session()->get('role_access')[0]['purchase_management']==1)
+
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tree"></i>
@@ -159,15 +193,17 @@ use Illuminate\Support\Facades\Auth;
                   <p>Purchase Details</p>
                 </a>
               </li>
-              <li class="nav-item">
+             {{--  <li class="nav-item">
                 <a href="/purchase-reports" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Purchase Reports</p>
                 </a>
-              </li>
+              </li> --}}
            
             </ul>
           </li>
+          @endif
+          @if (Session()->get('role_access')[0]['role_management']==1)
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-table"></i>
@@ -195,6 +231,11 @@ use Illuminate\Support\Facades\Auth;
                   <i class="far fa-circle nav-icon"></i>
                   <p>General Holidays</p>
                 </a>
+              </li> <li class="nav-item">
+                <a href="/hr-mark-attendence" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Mark Attendance</p>
+                </a>
               </li>
               
               <li class="nav-item">
@@ -202,7 +243,17 @@ use Illuminate\Support\Facades\Auth;
                   <i class="far fa-circle nav-icon"></i>
                   <p>Salary Setup</p>
                 </a>
-              </li>  <li class="nav-item">
+              </li>    <li class="nav-item">
+                <a href="/hr-generatepayslip" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Generate Payslip</p>
+                </a>
+              </li> 
+              
+              
+              
+              
+              <li class="nav-item">
                 <a href="/hr-salarypayslip" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Salary Payslip</p>
@@ -211,6 +262,10 @@ use Illuminate\Support\Facades\Auth;
              
             </ul>
           </li>
+@endif
+          
+
+          @if (Session()->get('role_access')[0]['customer_management']==1)
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-table"></i>
@@ -226,15 +281,19 @@ use Illuminate\Support\Facades\Auth;
                   <p>Customer Details</p>
                 </a>
               </li>
-              <li class="nav-item">
+             {{--  <li class="nav-item">
                 <a href="/customer-details" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Customer Reports</p>
                 </a>
-              </li>
+              </li> --}}
              
             </ul>
           </li>
+@endif
+         
+
+          @if (Session()->get('role_access')[0]['master_management']==1)
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-edit"></i>
@@ -245,15 +304,15 @@ use Illuminate\Support\Facades\Auth;
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/master-company" class="nav-link">
+                <a href="/master-brand" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Company</p>
+                  <p>Brand</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/master-plant" class="nav-link">
+                <a href="/master-category" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Plant</p>
+                  <p>Category</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -263,21 +322,12 @@ use Illuminate\Support\Facades\Auth;
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/master-product" class="nav-link">
+                <a href="/master-company" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Product</p>
+                  <p>Company</p>
                 </a>
-              </li><li class="nav-item">
-                <a href="/master-brand" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Brand</p>
-                </a>
-              </li><li class="nav-item">
-                <a href="/master-unit" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Unit</p>
-                </a>
-              </li><li class="nav-item">
+              </li> 
+              <li class="nav-item">
                 <a href="/master-form" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Form</p>
@@ -288,9 +338,41 @@ use Illuminate\Support\Facades\Auth;
                   <i class="far fa-circle nav-icon"></i>
                   <p>Lead source </p>
                 </a>
+              </li> <li class="nav-item">
+                <a href="/master-location" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Location </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/master-plant" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Plant</p>
+                </a>
+              </li>
+              
+              <li class="nav-item">
+                <a href="/master-product" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Product</p>
+                </a>
+              </li> <li class="nav-item">
+                <a href="/master-type" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Type</p>
+                </a>
+              </li>
+              
+              <li class="nav-item">
+                <a href="/master-unit" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Unit</p>
+                </a>
               </li>
             </ul>
           </li>
+@endif
+          
        
 
         

@@ -9,7 +9,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
           <li class="breadcrumb-item active">Salary Setup </li>
         </ol>
       </div><!-- /.col -->
@@ -33,57 +33,41 @@
 
             <tr>
               <th>#</th>
+              <th>User</th>
+              <th>EmployeeId</th>
               <th>Role</th>
-           
-             
+              <th>Company</th>
               <th>Action</th> 
             </tr>
           </thead>
         <tbody>
+          @foreach ($user as $us)
             <tr>
 
               
 
-           
-              <td>1</td>
-              <td>Sales Rep</td>
+              <td>{{ $loop->index+1 }}</td>
+             
+              <td>{{$us->name}}</td>
+                  <td>{{$us->employee_id}}</td>
+                  <td>{{$us->role_name}}</td>
+                  <td>{{$us->company_name}}</td>
                      
             
-              <td> <button type="button" class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#modal-lg"> Salary Setup</button></td>  </tr> 
-            <tr>
-
-              
-
-              <td>2</td>
-           
+              <td> <button type="button" class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#modal-{{$us->u_id}}"> Salary Setup</button></td> 
             
-              <td>Hr</td>
-            
-             
-            
-              <td> <button href="#" type="button" class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#modal-lg"> Salary Setup</button></td>  
             </tr> 
-            <tr>
-
-              
-
-              <td>3</td>
            
-        
-              <td>Accounts</td>
-                    
-             
-              <td> <button href="#" type="button" class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#modal-lg"> Salary Setup</button></td>  
-            </tr> 
-         
+         @endforeach
           
             </tbody>
             <tfoot>
             <tr>
               <th>#</th>
+              <th>User</th>
+              <th>EmployeeId</th>
               <th>Role</th>
-           
-             
+              <th>Company</th>
               <th>Action</th> 
             </tr>
             </tfoot>
@@ -105,8 +89,8 @@
     </div>
     <!-- /.row (main row) -->
   </div><!-- /.container-fluid -->
-
-  <div class="modal fade" id="modal-lg">
+  @foreach ($user as $us)
+  <div class="modal fade" id="modal-{{$us->u_id}}">
     <div class="modal-dialog ">
       <div class="modal-content">
         <div class="modal-header">
@@ -116,76 +100,113 @@
           </button>
         </div>
         <div class="modal-body">
-         <form>
+          <form method="POST"  action="{{url('update-salary-setup')}}">
+            @csrf
         <fieldset>
-         
-          <div class="form-group">
-            <label for="exampleInputEmail1">Basic Salary</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" placeholder="Basic Salary" required>
+          <input type="hidden" class="user_id"  name="user_id" value="{{$us->u_id}}" >
+          <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Basic Salary</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal add" value="{{$us->basic==NUll?0:$us->basic}}"  id="basic"  name="basic" placeholder="Basic Salary" required>
             <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
             </div>
           </div> 
 
-         <div class="form-group">
-            <label for="exampleInputEmail1">House Rent Allowance</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" placeholder="House Rent Allowance" required>
+         <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Dearness Allowance</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal add" value="{{$us->da==NUll?0:$us->da}}"  id="da" name="da" placeholder="Dearness Allowance" required>
+            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+            </div>
+          </div> 
+  <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">House Rent Allowance</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal add" value="{{$us->hra==NUll?0:$us->hra}}"  id="hra" name="hra" placeholder="House Rent Allowance" required>
             <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
             </div>
           </div> 
 
-         <div class="form-group">
-            <label for="exampleInputEmail1">Leave Travel Allowance</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" placeholder="Leave Travel Allowance" required>
+         <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Conveyance</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal add" value="{{$us->conveyance==NUll?0:$us->conveyance}}"  id="conveyance" name="conveyance" placeholder="Conveyance" required>
             <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
             </div>
           </div> 
 
-         <div class="form-group">
-            <label for="exampleInputEmail1">Medical + Conveyance</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" placeholder="Medical + Conveyance" required>
+         <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">City Compensatory Allowance </label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal add" value="{{$us->cca==NUll?0:$us->da}}"  id="cca" name="cca" placeholder="City Compensatory Allowance " required>
             <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
             </div>
           </div> 
 
-         <div class="form-group">
-            <label for="exampleInputEmail1">Statutory Bonus Salary</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" placeholder="Statutory Bonus Salary" required>
+         <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Bonus</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal add" value="{{$us->bonus==NUll?0:$us->bonus}}"  id="bonus" name="bonus" placeholder="Bonus" required>
             <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
             </div>
           </div> 
-   <div class="form-group">
-            <label for="exampleInputEmail1">Tax Detucted at Source</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" placeholder="Tax Detucted at Source" required>
-            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
-            </div>
-          </div> 
-   <div class="form-group">
-            <label for="exampleInputEmail1">Provident Fund</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" placeholder="Provident Fund" required>
-            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
-            </div>
-          </div> 
-   <div class="form-group">
-            <label for="exampleInputEmail1">Total CTC</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="created_by" name="created_by" readonly placeholder="Total CTC" required>
+   <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Incentive</label>
+            <div class="controls col-sm-7" >
+              <input type="hidden" class=" sub_tot" value="" >
+              <input type="text" class="form-control decimal add" value="{{$us->incentive==NUll?0:$us->incentive}}"  id="incentive" name="incentive" placeholder="Incentive" required>
             <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
             </div>
           </div> 
 
-       
 
-           <div class="form-group">
+          <h3>Total Deductions</h3>
+   <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">EPF Deduction</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal sub" value="{{$us->epf_deduction==NUll?0:$us->epf_deduction}}"  id="epf_deduction" name="epf_deduction" placeholder="EPF Deduction" required>
+            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+            </div>
+          </div> 
+   <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">ESI</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal sub" value="{{$us->esi==NUll?0:$us->esi}}"  id="esi" name="esi"  placeholder="ESI" required>
+            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+            </div>
+          </div>  
+          
+          
+          
+          <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Income Tax</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal sub" value="{{$us->income_tax==NUll?0:$us->income_tax}}"  id="income_tax" name="income_tax"  placeholder="Income Tax" required>
+            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+            </div>
+          </div>     
+          <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Loan</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal sub" value="{{$us->loan==NUll?0:$us->loan}}"  id="loan" name="loan"  placeholder="Loanx" required>
+            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+            </div>
+          </div>     
+          <div class="row form-group">
+            <label class="col-sm-5" for="exampleInputEmail1">Total</label>
+            <div class="controls col-sm-7" >
+              <input type="text" class="form-control decimal total" value="{{$us->total==NUll?0:$us->total}}"  id="total" name="total" readonly placeholder="Total" required>
+            <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+            </div>
+          </div> 
+
+          <input type="hidden" class=" sub_tot" value="0" >
+          <input type="hidden" class=" sub_min" value="0" >
+
+           <div class="row form-group">
             <!-- Button -->
-            <div class="controls">
-              <button type="button" class="btn btn-primary">Create</button>
+            <div class="controls col-sm-7" >
+              <button type="submit" class="btn btn-primary">Create</button>
             </div>
           </div>
           
@@ -202,7 +223,7 @@
     </div>
     <!-- /.modal-dialog -->
   </div>
-
+  @endforeach
 </section>
 
 @endsection

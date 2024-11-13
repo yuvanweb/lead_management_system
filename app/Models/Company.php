@@ -11,7 +11,7 @@ class Company extends Model
 
     protected $table ="companies";
 
-    protected  $fillable =['c_id','company_name','status'];
+    protected  $fillable =['c_id','company_name','company_code','status'];
 
 
    /*  public function getCompany_nameAttribute(){
@@ -22,4 +22,9 @@ class Company extends Model
     /* public function setcompany_nameAttribute($value){
        $this->attributes['company_name'] = ucfirst($value);
     } */
+
+    public function sales(){
+
+        return $this->belongsTo(Sales::class);
+     }
 }

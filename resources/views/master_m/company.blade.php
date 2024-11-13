@@ -9,7 +9,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
           <li class="breadcrumb-item active">Company </li>
         </ol>
       </div><!-- /.col -->
@@ -35,6 +35,7 @@
                 <tr>
                   <th>#</th>
                   <th>Company</th>
+                  <th>Company Code</th>
                   <th  class="td">Action</th> 
                 </tr>
               </thead>
@@ -43,6 +44,7 @@
               <tr>
                 <td>{{ $loop->index+1 }}</td>
                 <td>{{$comp->company_name}}</td>
+                <td>{{$comp->company_code}}</td>
                 <td  class="td"> 
                   <button type="button" class="btn btn-primary btn-sm edit_comp"  data-toggle="modal" data-target="#modal-ced" value="{{$comp->id}}">Edit </button> 
                   <a type="button" class="btn btn-danger btn-sm delete_comp" href="/delete-company/{{$comp->id}}">Delete </a>
@@ -59,6 +61,7 @@
                   <tr>
                   <th>#</th>
                   <th>Company</th>
+                  <th>Company Code</th>
                   <th  class="td">Action</th> 
                   </tr>
                 </tfoot>
@@ -102,6 +105,12 @@
                 <label for="exampleInputEmail1">Company Name</label>
                 <div class="controls">
                   <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Company Name" required>
+                <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+                </div>
+              </div>  <div class="form-group">
+                <label for="exampleInputEmail1">Company Code</label>
+                <div class="controls">
+                  <input type="text" class="form-control" id="company_code" name="company_code" placeholder="Company Code" required>
                 <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
                 </div>
               </div> 
@@ -151,6 +160,15 @@
                 <div class="controls">
                   <input type="text" class="form-control" id="edit_company_name" name="company_name" placeholder="Company Name" required>
                   <input type="hidden" id="ed_id" name="id">
+                <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
+                </div>
+              </div> 
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Company Code</label>
+                <div class="controls">
+                  <input type="text" class="form-control" id="edit_company_code" name="company_code" placeholder="Company Code" required>
+                
                 <!--  <p class="help-block">Username can contain any letters or numbers, without spaces</p>-->
                 </div>
               </div> 

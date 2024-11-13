@@ -9,7 +9,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
           <li class="breadcrumb-item active">Hr Dashboard</li>
         </ol>
       </div><!-- /.col -->
@@ -28,40 +28,29 @@
 
             <div class="info-box-content">
               <span class="info-box-text">Total Employee</span>
-              <span class="info-box-number">50</span>
+              <span class="info-box-number">{{$total[0]->tot}}</span>
             </div>
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
+
+        @foreach ($user as $item)
+            
+    
           <div class="info-box mb-3 bg-success">
             <span class="info-box-icon"><i class="far fa-heart"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Admin</span>
-              <span class="info-box-number">1</span>
+              <span class="info-box-text">{{$item->role_name}}</span>
+              <span class="info-box-number">{{$item->tot}}</span>
             </div>
             <!-- /.info-box-content -->
           </div>
+          @endforeach
           <!-- /.info-box -->
-          <div class="info-box mb-3 bg-danger">
-            <span class="info-box-icon"><i class="fas fa-cloud-download-alt"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Sub Admin</span>
-              <span class="info-box-number">3</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
+         
           <!-- /.info-box -->
-          <div class="info-box mb-3 bg-info">
-            <span class="info-box-icon"><i class="far fa-comment"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Sales Rep</span>
-              <span class="info-box-number">21</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
+        
         </div>
         <div class="col-md-8">
          
@@ -70,8 +59,8 @@
             Employee
           </div>
           <div class="card-body">
-            <canvas id="pieChartHrm" style="min-height: 300px; height: 300px; max-height: 550px; max-width: 100%;"></canvas>
-          </div>
+            <div id="piechart_3d" style="width: 100%; height: 375px;"></div>
+            </div>
         </div>
         </div>
         </div>
@@ -81,7 +70,33 @@
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
 
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript">
+        google.charts.load("current", {packages:["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Status', 'Total'],
+            @foreach ($user as $item)
 
+            ['{{$item->role_name}}',     <?=(int)$item->tot?>],
+            @endforeach
+         
+           
+          ]);
+  
+          var options = {
+         
+            is3D: true,
+            title: 'Over All Lead Status',
+            legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+            slices: {0: {color: '#440589'}, 1:{color: '#058986'}, 2:{color: '#900C3F'}}
+          };
+  
+          var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+          chart.draw(data, options);
+        }
+      </script>
 
 
 

@@ -9,202 +9,459 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
           <li class="breadcrumb-item active">Sales Dashboard</li>
         </ol>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
 </div>
-
+<section >
+  <div class="container">
+    <form method="POST" id="company" action="{{url('sales-month-dashboard')}}">
+      @csrf
+    <div class="card">
+      <div class="card-body">
+    <div class="row">
+      
+        <div class="col-md-4 "><h4>Select Month</h4></div>
+        <div class="col-md-4 "><input type="date" class="form-control" name="date"   required></div>
+        <div class="col-md-4 "><button  type= "submit" class="btn btn-primary float-right" >submit</button></div>
+       
+    
+    </div>
+    </div>
+    </div>
+  </form>
+    </div>
+    
+  </section>
 <section class="content">
       <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
-        <div class="row">
-         
+       
+        
+           <div class="row">
+          
           <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+
+                <div class="info-box mb-3 bg-info">
+                  <span class="info-box-icon"><i class="far fa-comment"></i></span>
+      
+                  <div class="info-box-content">
+                    <span class="info-box-text">Total Sales</span>
+                    <span class="info-box-number" id="tlc">{{$total_qty[0]->qunty==null?0:$total_qty[0]->qunty}}</span>
+                  </div>
+                  <!-- /.info-box-content -->
+                </div> 
+@foreach ($comp_qty as $cmp)
+  
+
           <div class="info-box col-mb-3 bg-warning">
             <span class="info-box-icon"><i class="fas fa-tag"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Total Lead</span>
-              <span class="info-box-number">300</span>
+              <span class="info-box-text">Current Month Sales in {{$cmp->company_name}}</span>
+              <span class="info-box-number" id="tlc">{{$cmp->qunty}}</span>
+            
             </div>
             <!-- /.info-box-content -->
           </div>
+
+          @endforeach
           <!-- /.info-box -->
-          <div class="info-box mb-3 bg-success">
-            <span class="info-box-icon"><i class="far fa-heart"></i></span>
+         <!-- <div class="info-box mb-3 bg-success">
+            <span class="info-box-icon"><i class="fas fa-calendar"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Current Month Lead</span>
-              <span class="info-box-number">78</span>
+              <span class="info-box-text" id="cmt">Current Month Sales in SAR</span>
+              <span class="info-box-number" id="clc"><?="0"?></span>
             </div>
-            <!-- /.info-box-content -->
+           
           </div>
-          <!-- /.info-box -->
+        
           <div class="info-box mb-3 bg-danger">
             <span class="info-box-icon"><i class="fas fa-cloud-download-alt"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Leads Existing Customer</span>
-              <span class="info-box-number">381</span>
+              <span class="info-box-text">Current Month Sales in SASN</span>
+              <span class="info-box-number" id="elc"><?="0"?></span>
             </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-          <div class="info-box mb-3 bg-info">
-            <span class="info-box-icon"><i class="far fa-comment"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Leads Current Customer</span>
-              <span class="info-box-number">21</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
+           
+          </div>-->
+          
+        
+        </div>
+        </div>
         </div>
         <div class="col-md-8">
-         
           <div class="card">
-          <div class="card-head text-center">
-            current month sales Product wise
-          </div>
           <div class="card-body">
-            <canvas id="pieChart" style="min-height: 300px; height: 300px; max-height: 550px; max-width: 100%;"></canvas>
-          </div>
+           <!-- <input type="hidden" id="prod_det" value="">-->
+            <div id="piechart_3d" style="width: 100%; height: 375px;"></div>
+           </div>
         </div>
         </div>
         </div>
         <!-- /.row -->
-        <!-- Main row -->
         <div class="row">
+          
+          <div class="col-md-6">  <div class="card">
+            <div class="card-body"> <div id="dual_x_div"  style="width: 100%; height: 375px;"></div>
+          </div>
+          </div>
+          </div>
+         
+         
+          
+            
+          <div class="col-md-6">  <div class="card">
+            <div class="card-body">  
+
+              <div id="barchart_values"  style="width: 100%; height: 375px;"></div>
+
+            </div>      
+            </div>      
+                 
+        
+        </div>
+        </div>
+        
+        
+        <div class="row">
+          
           <div class="col-md-6">
-            <div class="card card-success">
-              <div class="card-header">
-                <h3 class="card-title">current month Purchase vs Current month sales </h3>
+            <div class="card">
+              <div class="card-body">  
+  
+                <div id="gp_diff_type"  style="width: 100%; height: 375px;"></div>
+  
+              </div>      
+              </div>  
 
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="chart">
-                  <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                </div>
-              </div>
-              <!-- /.card-body -->
-            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">  
+  
+                <div id="pplg_dif_type"  style="width: 100%; height: 375px;"></div>
+  
+              </div>      
+              </div>    
+          </div>      
+        
+        </div> <div class="row">
+          
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">  
+  
+                <div id="gp_diff_brands"  style="width: 100%; height: 375px;"></div>
+  
+              </div>      
+              </div>  
 
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">  
+  
+                <div id="unit_wise"  style="width: 100%; height: 375px;"></div>
+  
+              </div>      
+              </div>    
+          </div>      
+        
+        </div> <div class="row">
+          
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">  
+  
+                <div id="diff_forms"  style="width: 100%; height: 375px;"></div>
+  
+              </div>      
+              </div>  
+
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">  
+  
+                <div id="category_wise"  style="width: 100%; height: 375px;"></div>
+  
+              </div>      
+              </div>    
+          </div>      
+    
         </div>
-        <div class="col-md-6">
-      
-            <div class="card card-success">
-              <div class="card-header">
-                <h3 class="card-title">Product month sales For 12 months </h3>
-
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="chart">
-                  <canvas id="barCharts" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                </div>
-              </div>
-              <!-- /.card-body -->
-            </div>
-        </div>
-        </div>
-        <!-- /.row (main row) -->
-      </div><!-- /.container-fluid -->
-
-
-
-
-
-
-
-
-
-
-
     </section>
-<script>
-  var donutData        = {
-      labels: [
-          'GP Coil',
-          'PPGL Coil',
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+     google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(pplg_dif_type);
+      function pplg_dif_type() {
+        var data = google.visualization.arrayToDataTable([
+          ['Status', 'Total'],
+          @foreach ($gpgl_diff_type as $gpgl_diff)
+          ['{{$gpgl_diff->type_name}}', {{$gpgl_diff->s_qunty}}],
+          @endforeach
+          
+        ]);
+
+        var options = {
+        //  title: 'My Daily Activities',
+          is3D: true,
+          title: 'sales for PPGL for different types',
+          legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+          slices: {0: {color: '#440589'}, 1:{color: '#058986'}, 2:{color: '#900C3F'}}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('pplg_dif_type'));
+        chart.draw(data, options);
+      }
+     
+////////////////////////////////////////////////////////////////////////
+ google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(gp_diff_type);
+      function gp_diff_type() {
+        var data = google.visualization.arrayToDataTable([
+          ['Status', 'Total'],
+          @foreach ($gp_diff_type as $gp_diff)
+          ['{{$gp_diff->type_name}}', {{$gp_diff->s_qunty}}],
+          @endforeach
+        ]);
+
+        var options = {
+        //  title: 'My Daily Activities',
+          is3D: true,
+          title: 'sales for GP for different types',
+          legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+          slices: {0: {color: '#440589'}, 1:{color: '#058986'}, 2:{color: '#900C3F'}}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('gp_diff_type'));
+        chart.draw(data, options);
+      }
+
+////////////////////////////////////////////////////////////////////////
+
+
+   google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Product', 'Total'],
+       
+          @foreach ($prod_qty as $pr)
+          ['{{$pr->product_name}}',{{$pr->qunty}}], 
+          @endforeach
+        ]);
+
+       
+      
+        var options = {
+        //  title: 'My Daily Activities',
+          is3D: true,
+          title: 'current month sales Product',
+          legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+          slices: {0: {color: '#440589'}, 1:{color: '#058986'}, 2:{color: '#900C3F'}}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+      }
+
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawStuff);
+
+      function drawStuff() {
+        var data = new google.visualization.arrayToDataTable([
+          ['Product', 'Sales', 'Purchase'],
+
+        
+          @foreach ($purchasevssales['name']  as $key =>  $parvs)
+   
+          ['{{$parvs}}',{{$purchasevssales['sales'][$key]}},{{$purchasevssales['purchase'][$key]}}],    
+          @endforeach
         
          
-      ],
-      datasets: [
-        {
-          data: [54,46],
-          backgroundColor : [ '#00a65a', '#f39c12'],
-        }
-      ]
-    }
-  
-    var areaChartData = {
-      labels  : ['Sepetember'],
-      datasets: [
-        {
-          label               : 'Digital Goods',
-          backgroundColor     : 'rgba(60,141,188,0.9)',
-          borderColor         : 'rgba(60,141,188,0.8)',
-          pointRadius          : false,
-          pointColor          : '#3b8bba',
-          pointStrokeColor    : 'rgba(60,141,188,1)',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(60,141,188,1)',
-          data                : [28, 48, 40, 19, 86, 27, 90]
-        },
-        {
-          label               : 'Electronics',
-          backgroundColor     : 'rgba(210, 214, 222, 1)',
-          borderColor         : 'rgba(210, 214, 222, 1)',
-          pointRadius         : false,
-          pointColor          : 'rgba(210, 214, 222, 1)',
-          pointStrokeColor    : '#c1c7d1',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(220,220,220,1)',
-          data                : [65, 59, 80, 81, 56, 55, 40]
-        },
-      ]
-    }
+        
+        ]);
 
-    var areaChartDataSa = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-        {
-          label               : 'Digital Goods',
-          backgroundColor     : 'rgba(60,141,188,0.9)',
-          borderColor         : 'rgba(60,141,188,0.8)',
-          pointRadius          : false,
-          pointColor          : '#3b8bba',
-          pointStrokeColor    : 'rgba(60,141,188,1)',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(60,141,188,1)',
-          data                : [28, 48, 40, 19, 86, 27, 90]
-        },
-        {
-          label               : 'Electronics',
-          backgroundColor     : 'rgba(210, 214, 222, 1)',
-          borderColor         : 'rgba(210, 214, 222, 1)',
-          pointRadius         : false,
-          pointColor          : 'rgba(210, 214, 222, 1)',
-          pointStrokeColor    : '#c1c7d1',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(220,220,220,1)',
-          data                : [65, 59, 80, 81, 56, 55, 40]
-        },
-      ]
-    }
-</script>
+        var options = {
+          title: 'Purchase Vs Sales',
+            legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+            
+           // subtitle: 'distance on the left, brightness on the right'
+        
+          bars: 'horizontal', // Required for Material Bar Charts.
+         /*  series: {
+            0: { axis: 'product' }, // Bind series 0 to an axis named 'distance'.
+            1: { axis: 'sales' } // Bind series 1 to an axis named 'brightness'.
+          }, */
+         /*  axes: {
+            x: {
+              product: {label: 'parsecs'}, // Bottom x-axis.
+              sales: {side: 'top', label: 'apparent magnitude'} // Top x-axis.
+            }
+          } */
+        };
+
+      var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
+      chart.draw(data, options);
+    };
+
+////////////////////////////////////////////////////////////////////////
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawCharts);
+    function drawCharts() {
+      var data = google.visualization.arrayToDataTable([
+        @if (sizeof($product_type)>0)
+        ["Element", "Density", { role: "style" } ],
+
+@foreach ($product_type as $pt)
+        ["{{$pt->product_name}}",{{$pt->qunty==""?0:$pt->qunty}}, "#b87333"],  
+        @endforeach
+@endif
+        
+       
+       
+      ]);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        title: "Product month sales",
+       
+        bar: {groupWidth: "50%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+      chart.draw(view, options);
+  }
+
+///////////////////////////////////////////////////////////////////////////////////
+
+google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(gp_diff_brands);
+      function gp_diff_brands() {
+        var data = google.visualization.arrayToDataTable([
+          ['Status', 'Total'],
+          @foreach ($brand as $bn)
+          ['{{$bn->brand_name}}', {{$bn->s_qunty}}],
+          @endforeach
+         
+        ]);
+
+        var options = {
+        //  title: 'My Daily Activities',
+          is3D: true,
+          title: 'PPGL for different brands',
+          legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+          slices: {0: {color: '#440589'}, 1:{color: '#058986'}, 2:{color: '#900C3F'}}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('gp_diff_brands'));
+        chart.draw(data, options);
+      }
+
+      /////////////////////////////////////////////////////////////
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(unit_wise);
+      function unit_wise() {
+        var data = google.visualization.arrayToDataTable([
+          ['Status', 'Total'],
+          @foreach ($unit as $un)
+          ['{{$un->unit_name}}', {{$un->s_qunty}}],
+          @endforeach
+         
+        ]);
+
+        var options = {
+        //  title: 'My Daily Activities',
+          is3D: true,
+          title: 'Unit wise sales',
+          legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+          slices: {0: {color: '#440589'}, 1:{color: '#058986'}, 2:{color: '#900C3F'}}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('unit_wise'));
+        chart.draw(data, options);
+      }
+      ///////////////////////////////////////////////////////////////////////
+      google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(diff_forms);
+    function diff_forms() {
+     
+     
+      var data = google.visualization.arrayToDataTable([
+        @if (sizeof($forms)>0)
+        ["Form", "Qnt", { role: "style" } ],
+        @foreach ($forms as $fm)
+   
+        ['{{$fm->form_name}}', {{$fm->s_qunty}}, "silver"],
+          
+  
+        @endforeach
+        @endif
+       
+      ]);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        title: "month sales - in different forms",
+       
+        bar: {groupWidth: "50%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.BarChart(document.getElementById("diff_forms"));
+      chart.draw(view, options);
+  }
+  //////////////////////////////////////////////////////////
+  google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(category_wise);
+      function category_wise() {
+        var data = google.visualization.arrayToDataTable([
+          ['Status', 'Total'],
+          @foreach ($categories as $ct)
+          ['{{$ct->categorie_name}}', {{$ct->s_qunty}}],
+          @endforeach
+         
+        ]);
+
+        var options = {
+        //  title: 'My Daily Activities',
+          is3D: true,
+          title: 'Sales - Customer category wise',
+          legend:{position: 'top', textStyle: {color: 'blue', fontSize: 16}},
+          slices: {0: {color: '#440589'}, 1:{color: '#058986'}, 2:{color: '#900C3F'}}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('category_wise'));
+        chart.draw(data, options);
+      }
+    </script>
 @endsection

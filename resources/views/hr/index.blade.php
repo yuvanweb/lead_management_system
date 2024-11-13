@@ -9,7 +9,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
           <li class="breadcrumb-item active">Employee </li>
         </ol>
       </div><!-- /.col -->
@@ -38,63 +38,33 @@
                   <th>Email Id</th>
                   <th>Mobile</th>
                   <th>Role </th>
-                  <th>Join Date </th>
+                  <th>Company </th>
                  
                   <th>Action</th> 
                 </tr>
               </thead>
             <tbody>
-                <tr>
+              @foreach ($user as $us)
+              <tr>
 
                   
 
-                  <td>1</td>
-               
-                  <td>Saro</td>
-                  <td>EMP001</td>
-                  <td>Saro@gmail.com</td>
-                  <td>9898987676</td>
-                  <td>Sales Rep</td>
-                  <td>11-sep-2024</td>
-                
-                 
-                
-                  <td> <a href="/hr-viewemployee" type="button" class="btn btn-primary btn-sm">View | Edit</a></td>  </tr> 
-                <tr>
-
-                  
-
-                  <td>2</td>
-               
-                  <td>Maro</td>
-                  <td>EMP002</td>
-                  <td>Maro@gmail.com</td>
-                  <td>9898987676</td>
-                  <td>Sales Rep</td>
-                  <td></td>
-                
-                 
-                
-                  <td> <a href="/hr-viewemployee" type="button" class="btn btn-primary btn-sm">View | Edit</a></td>
-                </tr> 
-                <tr>
-
-                  
-
-                  <td>3</td>
-               
-                  <td>Garo</td>
-                  <td>EMP003</td>
-                  <td>Garo@gmail.com</td>
-                  <td>9898987676</td>
-                  <td>Sales Rep</td>
-                  <td>11-sep-2024</td>
-                
-                 
-                
-                  <td> <a href="/hr-viewemployee" type="button" class="btn btn-primary btn-sm">View | Edit</a></td>   </tr> 
+                <td>{{ $loop->index+1 }}</td>
              
-              
+                <td>{{$us->name}}</td>
+                    <td>{{$us->employee_id}}</td>
+                    <td>{{$us->email}}</td>
+                    <td>{{$us->mobile}}</td>
+                    <td>{{$us->role_name}}</td>
+                    <td>{{$us->company_name}}</td>
+               
+                <td> <a href="/hr-viewemployee/{{$us->id}}" type="button" class="btn btn-primary btn-sm">View | Edit</a></td>  
+              </tr> 
+              @endforeach
+                
+               
+               
+               
                 </tbody>
                 <tfoot>
                 <tr>

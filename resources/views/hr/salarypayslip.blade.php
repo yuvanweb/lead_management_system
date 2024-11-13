@@ -9,7 +9,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
           <li class="breadcrumb-item active">Salary Paylist </li>
         </ol>
       </div><!-- /.col -->
@@ -17,6 +17,19 @@
   </div><!-- /.container-fluid -->
 </div>
 
+<section class="content pb-4">
+  <div class="container-fluid">
+    <form  method="POST" action="generate-payslip-pdf">
+      @csrf
+    <div class="row">
+<div class="col"><h4>Select Date</h4></div>
+<div class="col"><input type="date" class="form-control" name="date" id="date" required></div>
+<div class="col"><button type="submit" class="btn btn-danger text-right">Download Payslip</button></div>
+
+    </div>
+    </form>
+    </div>
+</section>
 <section class="content">
   <div class="container-fluid">
     <!-- Small boxes (Stat box) -->
@@ -27,88 +40,9 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-          <table id="example2" class="table table-bordered table-striped">
-            <thead>
-                
-
-            <tr>
-              <th>#</th>
-              <th>Employee Name</th>
-              <th>Employee Id</th>
-              <th>Email Id</th>
-              <th>Mobile</th>
-              <th>Role </th>
-              <th>Join Date </th>
-             
-              <th>Action</th> 
-            </tr>
-          </thead>
-        <tbody>
-            <tr>
-
-              
-
-              <td>1</td>
-           
-              <td>Saro</td>
-              <td>EMP001</td>
-              <td>Saro@gmail.com</td>
-              <td>9898987676</td>
-              <td>Sales Rep</td>
-              <td>11-sep-2024</td>
-            
-             
-            
-              <td> <a href="#" type="button" class="btn btn-danger btn-sm">Generate Pay slip</a></td>  </tr> 
-            <tr>
-
-              
-
-              <td>2</td>
-           
-              <td>Maro</td>
-              <td>EMP002</td>
-              <td>Maro@gmail.com</td>
-              <td>9898987676</td>
-              <td>Sales Rep</td>
-              <td></td>
-            
-             
-            
-              <td> <a href="#" type="button" class="btn btn-danger btn-sm">Generate Pay slip</a></td>  </tr> 
-          </tr> 
-            <tr>
-
-              
-
-              <td>3</td>
-           
-              <td>Garo</td>
-              <td>EMP003</td>
-              <td>Garo@gmail.com</td>
-              <td>9898987676</td>
-              <td>Sales Rep</td>
-              <td>11-sep-2024</td>
-            
-             
-              <td> <a href="#" type="button" class="btn btn-danger btn-sm">Generate Pay slip</a></td>  </tr> 
-         
+        <div id="app_pay">
           
-            </tbody>
-            <tfoot>
-            <tr>
-              <th>#</th>
-              <th>Employee Name</th>
-              <th>Employee Id</th>
-              <th>Email Id</th>
-              <th>Mobile</th>
-              <th>Role </th>
-              <th>Join Date </th>
-             
-              <th>Action</th> 
-            </tr>
-            </tfoot>
-          </table>
+        </div>
         </div>
         <!-- /.card-body -->
       </div>

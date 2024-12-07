@@ -123,9 +123,11 @@
 <!-- ChartJS -->
 <script src="/template/plugins/chart.js/Chart.min.js"></script>
 <!-- Sparkline -->
-<script src="/template/dist/js/chart.js"></script>  
+{{-- <script src="/template/dist/js/chart.js"></script>  --}} 
 <script src="/template/plugins/select2/js/select2.full.min.js"></script>
-<script src="/template/plugins/sparklines/sparkline.js"></script>
+<script src="/template/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+
+{{-- <script src="/template/plugins/sparklines/sparkline.js"></script> --}}
 <!-- JQVMap -->
 <script src="/template/plugins/jqvmap/jquery.vmap.min.js"></script>
 <script src="/template/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
@@ -158,23 +160,13 @@
 <script src="/template/plugins/chart.js/Chart.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/template/plugins/moment/moment.min.js"></script>
-<script src="/template/plugins/fullcalendar/main.js"></script>
+{{-- <script src="/template/plugins/fullcalendar/main.js"></script> --}}
 <script src="/template/dist/js/custom.js"></script>   
-<script src="/template/dist/js/cal_script.js"></script>   
+{{-- <script src="/template/dist/js/cal_script.js"></script>  --}}  
 <script src="/template/dist/js/demo.js"></script>   
 
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="/template/dist/js/pages/dashboard.js"></script>
-<script>
-  $(function () {
-    //Initialize Select2 Elements
-    $('.select2').select2();
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
+{{-- <script src="/template/dist/js/pages/dashboard.js"></script> --}}
 
-  
-  });
-  </script>
 </body>
 </html>

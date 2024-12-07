@@ -26,7 +26,7 @@
            
             <div class="card">
               <div class="card-head">
-                Sample Excel File format  <div class="text-right"><a class="btn btn-success px-1" href="/sample/Purchase_sheet.xlsx">Download</a></div>
+                Sample Excel File format  <div class="text-right"><a class="btn btn-success px-1" href="/sample/Purchase_sheet.xlsx">Download Template</a></div>
               </div>
               <div class="card-body text-danger">
           
@@ -36,7 +36,7 @@
                 <br>
                 3) Empty Values not accepted 
                 <br>
-               4) First two row data will not insert in database
+                4) First two row data will not insert in database
          
           </div>
             </div>

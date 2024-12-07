@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Bank_detail;
 use App\Models\Holidays;
+use App\Models\LoanDue;
+use App\Models\LoanMaster;
 use App\Models\Personal_detail;
 use App\Models\staffAttendance;
 use App\Models\StaffMonthlyLeave;
@@ -14,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use DateInterval;
+use DatePeriod;
 use DateTime;
 
 class HrController extends Controller
@@ -523,6 +527,32 @@ class HrController extends Controller
             ->where("users.status", 1)
             ->get();
         return view("hr.salarysetup_mod")->with("user", $user);
+    }  
+    
+    public function calculatePayslip(Request $request,$id)
+    {
+        $location_id = Auth::user()->location_id;
+
+        $user = DB::table("users")
+            ->join("roles", "users.role", "=", "roles.id")
+            ->leftJoin("companies", "users.company_id", "=", "companies.id")
+            ->leftJoin("locations", "users.location_id", "=", "locations.id")
+            ->leftJoin("staff_pay_scales", "users.id", "=", "staff_pay_scales.user_id")
+
+            ->select(
+                "users.*",
+                "users.id AS u_id",
+                "staff_pay_scales.*",
+                "roles.role_name",
+                "companies.company_name",
+                "locations.location_name"
+            )
+            ->where("users.id", "!=", 1)
+            ->where("users.location_id", $location_id)
+            ->where("users.status", 1)
+            ->where("users.id",$id)
+            ->get();
+        return view("hr.salarysetup_calculate")->with("user", $user);
     }
     public function addSalarySetup(Request $requests)
     {
@@ -541,12 +571,14 @@ if($wordCount==0){
     $user = new StaffPayScale();
     $user->user_id = $requests->user_id;
     $user->basic = $requests->basic;
+    $user->paypmonth = $requests->paypmonth;
     $user->da = $requests->da;
     $user->hra = $requests->hra;
     $user->conveyance = $requests->conveyance;
     $user->cca = $requests->cca;
     $user->bonus = $requests->bonus;
     $user->incentive = $requests->incentive;
+    $user->gtotal = $requests->gtotal;
     $user->epf_deduction = $requests->epf_deduction;
     $user->esi = $requests->esi;
     $user->income_tax = $requests->income_tax;
@@ -556,6 +588,7 @@ if($wordCount==0){
     }else{
     $data = array(
         'user_id' => $requests->user_id,
+        'paypmonth' => $requests->paypmonth,
         'basic' => $requests->basic,
         'da' => $requests->da,
         'hra' => $requests->hra,
@@ -563,6 +596,7 @@ if($wordCount==0){
         'cca' => $requests->cca,
         'bonus' => $requests->bonus,
         'incentive' => $requests->incentive,
+        'gtotal' => $requests->gtotal,
         'epf_deduction' => $requests->epf_deduction,
         'esi' => $requests->esi,
         'income_tax' => $requests->income_tax,
@@ -586,7 +620,10 @@ if($wordCount==0){
        // return view("hr.reports");
        return view("hr.generate_pay_slip");
         
-    } public function generateMonthlyPayslip(Request $requests)
+    } 
+    
+    
+    public function generateMonthlyPayslip(Request $requests)
     {
 
         $location_id = Auth::user()->location_id;
@@ -595,8 +632,8 @@ if($wordCount==0){
             ->join("roles", "users.role", "=", "roles.id")
             ->leftJoin("companies", "users.company_id", "=", "companies.id")
             ->leftJoin("locations", "users.location_id", "=", "locations.id")
-            ->leftJoin("staff_pay_scales", "users.id", "=", "staff_pay_scales.user_id")
-            ->leftJoin("staff_monthly_leaves", "users.id", "=", "staff_monthly_leaves.user_id")
+            ->rightJoin("staff_pay_scales", "users.id", "=", "staff_pay_scales.user_id")
+            ->rightJoin("staff_monthly_leaves", "users.id", "=", "staff_monthly_leaves.user_id")
 
             ->select(
                 "users.*",
@@ -611,12 +648,21 @@ if($wordCount==0){
             ->where("users.location_id", $location_id)
             ->where("users.status", 1)
             ->get();
+
+
+           /*      echo"<pre>";
+            print_r($user);
+            exit; */
  
        $month = date('m',strtotime($requests->date));
        $year = date('Y',strtotime($requests->date));
        $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         
-       $table='<table class="table table-striped table-bordered" id="table_content"><thead><tr><th>Sl/No</th><th>Emp.ID</th><th>Name</th><th>Role</th>';
+       $table='
+       <h4 class="text-danger text center"><b>  Note: If employee not listed please check the bellow condition</b><br> 1) Generate pay scale for the employee<br>
+       2) Assign monthly leave in employee profile  </h4>
+       
+       <table class="table table-striped table-bordered" id="table_content"><thead><tr><th>Sl/No</th><th>Emp.ID</th><th>Name</th><th>Role</th>';
 
         $sunday = $this->countsunday($requests->date);
         $date = new Datetime($year.'-'.$month.'-01');
@@ -626,7 +672,7 @@ if($wordCount==0){
                 $table.='<th>'.$i.'</th>';
 
             }
-    $table.='<th>Present</th><th>Monthly Leave</th><th>Sunday</th><th>Leave</th></tr>
+    $table.='<th>Present</th><th>Monthly Leave</th><th>Sunday</th><th>Leave Taken</th><th>LOP</th></tr>
     </thead><tbody>';
     $m=1;
     foreach ($user as $key => $value) {
@@ -638,6 +684,7 @@ if($wordCount==0){
         
       $present=$sunday;
       $leave =0;
+      $lop = 0;
         for($i=1;$i<=(int)$days;$i++){
             $date=$year."-".$month."-".$i;
             $dayOfWeek = date('l', strtotime($date));
@@ -670,6 +717,20 @@ if($wordCount==0){
 
                     }
 
+                $lop =    $value->leave_per_month - $leave;
+
+                if($lop < 0){
+
+                  
+                        $mylop = $lop * -1;
+                   
+                }else{
+                    $mylop = 0;
+
+                }
+
+              // $lop <= 0?$lop=$lop:0;
+
             $table.='<td>'. $daval.'</td>';
     
         }
@@ -677,6 +738,7 @@ if($wordCount==0){
         $table.='<td>'.$value->leave_per_month.'</td>';
         $table.='<td>'.$sunday.'</td>';
         $table.='<td>'.$leave.'</td>';
+        $table.='<td>'.$mylop.'</td>';
           $table.='</tr>';
         $m++;
     }
@@ -703,8 +765,8 @@ if($wordCount==0){
         ->join("roles", "users.role", "=", "roles.id")
         ->leftJoin("companies", "users.company_id", "=", "companies.id")
         ->leftJoin("locations", "users.location_id", "=", "locations.id")
-        ->leftJoin("staff_pay_scales", "users.id", "=", "staff_pay_scales.user_id")
-        ->leftJoin("staff_monthly_leaves", "users.id", "=", "staff_monthly_leaves.user_id")
+        ->rightJoin("staff_pay_scales", "users.id", "=", "staff_pay_scales.user_id")
+        ->rightJoin("staff_monthly_leaves", "users.id", "=", "staff_monthly_leaves.user_id")
         ->leftJoin("personal_details", "users.id", "=", "personal_details.user_id")
         ->leftJoin("bank_details", "users.id", "=", "bank_details.user_id")
 
@@ -762,13 +824,57 @@ if($wordCount==0){
         }
 
     }
+    $lop =    $value->leave_per_month - $leave;
+
+    if($lop < 0){
+
+      
+            $mylop = $lop * -1;
+       
+    }else{
+        $mylop = 0;
 
     }
+    }
+
+    $loan =  LoanDue::where("month", $month)
+    ->where("year",$year)->where("user_id", $value->u_id)->get();
+
+    $loanCount = $loan->count();
+
+    if($loanCount==0){
+        $amt=0;
+    }else{
+        $amt=$loan[0]->amount;
+    }
+
+   /* print_r($amt);
+   exit; */
    
     $ps = StaffPaySlip::where("month", $month)
     ->where("year",$year)->where("user_id", $value->u_id)->get();
 
+ 
+
     $psCount = $ps->count();
+
+
+    $gtot = $value->total;
+
+
+   
+
+    $pdsalary = $gtot / $days;
+
+    if($mylop > 0){
+
+$lopmycur = $pdsalary * $mylop;
+    }else{
+
+        $lopmycur = 0;  
+    }
+
+    $final_salary = $value->total - $lopmycur;
 
     if($psCount==0){
 
@@ -801,18 +907,30 @@ $payslp =array(
     "cca"=>$value->cca==""?0:$value->cca,
     "bonus"=>$value->bonus==""?0:$value->bonus,
     "incentive"=>$value->incentive==""?0:$value->incentive,
+    "gtotal"=>$value->gtotal==""?0:$value->gtotal,
     "epf_deduction"=>$value->epf_deduction==""?0:$value->epf_deduction,
     "esi"=>$value->esi==""?0:$value->esi,
     "income_tax"=>$value->income_tax==""?0:$value->income_tax,
-    "loan"=>$value->loan==""?0:$value->loan,
+    "loan"=>$amt,
     "gross_earning"=>$value->total,
-    "gross_deduction"=>$value->u_id,
-    "lop"=>$value->u_id,
+    "gross_deduction"=>$value->gtotal-$value->total,
+    "lop"=>$mylop,
+    "lop_deduction"=>number_format((float)$lopmycur, 2, '.', ''),
+    "monthlt_total"=>number_format((float)$final_salary, 2, '.', ''),
     "pay_slip_genrated_gate"=>date('d-M-Y'),
 );
-DB::table('staff_pay_slips')->insert($payslp);
+$id = DB::table('staff_pay_slips')->insertGetId($payslp);
+
+
+if($loanCount > 0){
+    $due_is = array(
+        'payslip_id'=>$id,
+    );
+    LoanDue::whereId($loan[0]->id)->update($due_is);
+}
+
     }else{
-$idp = $ps[0]->id;
+/* $idp = $ps[0]->id;
         $payslp =array(
             "user_id"=>$value->u_id,
             "month"=>$month,
@@ -847,12 +965,17 @@ $idp = $ps[0]->id;
             "loan"=>$value->loan==""?0:$value->loan,
             "gross_earning"=>$value->total,
             "gross_deduction"=>$value->u_id,
-            "lop"=>$value->u_id,
+            "lop"=>$mylop,
             "pay_slip_genrated_gate"=>date('d-M-Y'),
         );
-        StaffPaySlip::whereId($idp)->update($payslp);  
+      //  StaffPaySlip::whereId($idp)->update($payslp);   */
     }
+/*     echo "<pre>";
+print_r($payslp); */
 }
+
+
+
 return redirect()
 ->back()
 ->with("success", "PaySlip successfully created");
@@ -970,101 +1093,188 @@ return redirect()
       
 
 
-/* echo"<pre>";
-print_r($user); */
-
-       
-        
-   /*     $table='<table class="table table-striped table-bordered" id="table_content"><thead><tr><th>Sl/No</th><th>Emp.ID</th><th>Name</th><th>Role</th>';
-
-        $sunday = $this->countsunday($requests->date);
-        $date = new Datetime($year.'-'.$month.'-01');
-
-            for($i=1;$i<=(int)$days;$i++){
-
-                $table.='<th>'.$i.'</th>';
-
-            }
-    $table.='<th>Present</th><th>Monthly Leave</th><th>Sunday</th><th>Leave</th></tr>
-    </thead><tbody>';
-    $m=1;
-    foreach ($user as $key => $value) {
-        $table.='<tr>
-        <td>'.$m.'</td>
-        <td>'.$value->employee_id.'</td>
-        <td>'.$value->name.'</td>
-        <td>'.$value->role_name.'</td>';
-        
-      $present=$sunday;
-      $leave =0;
-        for($i=1;$i<=(int)$days;$i++){
-            $date=$year."-".$month."-".$i;
-            $dayOfWeek = date('l', strtotime($date));
-        $valuess = staffAttendance::where("attendance_date", $date)
-                    ->where("user_id", $value->u_id)->get();
-        $wordCount = $valuess->count();
-
-                    if($wordCount==0){
-                        if($dayOfWeek == 'Sunday'){
-                            $daval = "OFF";
-                        }else{
-                            $daval = "NA";  
-                        }
-                       
-                    }else{
-                       
-
-                        if($valuess[0]->attendance_status==0){
-                            $daval ="A";
-                            $present+=0;
-                            $leave+=1;
-                        }elseif($valuess[0]->attendance_status==1){
-                            $daval ="P";  
-                            $present+=1;
-                        }elseif($valuess[0]->attendance_status==2){
-                            $daval ="H"; 
-                            $present+=.5;
-                            $leave+=.5;
-                        }
-
-                    }
-
-            $table.='<td>'. $daval.'</td>';
-    
-        }
-        $table.='<td>'.$present.'</td>';
-        $table.='<td>'.$value->leave_per_month.'</td>';
-        $table.='<td>'.$sunday.'</td>';
-        $table.='<td>'.$leave.'</td>';
-          $table.='</tr>';
-        $m++;
-    }
-    
-    
-     $table.='</tbody></table>
-     <div class="form-group row">
-   <div class="col">
-   <a href="generate-final-payslip/'.$location_id.'/'.$requests->date.'" id="btn-signup" type="button" class="btn btn-info text-right">Generate PaySlip</a>
-    </div></div>';
-   echo $table; */
-
-
-
- /*   $pdf = PDF::loadView('hr.invoice');
-   return $pdf->download('invoice.pdf');
- */
-/* $gt=1;
- foreach ($user as $key => $value) { */
-
    
-      $pdf = PDF::loadView('hr.pdf_invoice',['user'=>$user])->setPaper([0, 1, 710.98, 500.85], 'landscape');
+      $pdf = PDF::loadView('hr.pdf_invoice',['user'=>$user,'days'=>$days])->setPaper([0, 1, 710.98, 500.85], 'landscape');
       //$pdf->setPaper([0, 0, 685.98, 396.85], 'landscape');
 
       return $pdf->download('invoice.pdf');
-  //$gt++;
-//}
-
+ 
     
     }
-   
+
+    public function loanSetup(){
+
+        $location_id = Auth::user()->location_id;
+       
+        $loan = LoanMaster::select('loan_masters.*','users.name')
+       ->leftJoin('users', 'loan_masters.user_id', '=', 'users.id')
+       ->where('loan_masters.status',1)
+       ->where('loan_masters.payment_completed',0)->get();
+      /*  $user = LoanMaster::select('loan_masters.*','users.name')
+       ->leftJoin('users', 'loan_masters.user_id', '=', 'users.id')
+       ->where('loan_masters.status',1)
+       ->where('loan_masters.payment_completed',1)->get(); */
+
+       $user = DB::table("users")
+       ->join("roles", "users.role", "=", "roles.id")
+       ->leftJoin("companies", "users.company_id", "=", "companies.id")
+       ->leftJoin("locations", "users.location_id", "=", "locations.id")
+       ->leftJoin("staff_pay_scales", "users.id", "=", "staff_pay_scales.user_id")
+       ->leftJoin("staff_monthly_leaves", "users.id", "=", "staff_monthly_leaves.user_id")
+  
+       ->select(
+           "users.*",
+           "users.id AS u_id",
+           "staff_pay_scales.*",
+           "roles.role_name",
+       
+           "companies.company_name",
+           "staff_monthly_leaves.leave_per_month",
+           "locations.location_name"
+       )
+    
+       ->where("users.id", "!=", 1)
+       ->where("users.location_id", $location_id)
+       ->where("users.status", 1)
+       ->get();
+
+        return view("hr.loansetup")->with('loan',$loan)->with('user',$user);
+    }
+    public function deleteLoanSetup(Request $request){
+
+
+        DB::table('loan_masters')->where('id', $request->id)->delete();
+        DB::table('loan_dues')->where('loan_id', $request->id)->delete();
+
+        return redirect()
+        ->back()
+        ->with("failed", "Successfully deleted");
+
+    } public function viewLoanSetup(Request $request){
+
+
+      $master =  LoanMaster::select('loan_masters.*','users.*')
+      ->leftJoin('users', 'loan_masters.user_id', '=', 'users.id')
+      ->where('loan_masters.status',1)
+      ->where('loan_masters.id', $request->id)
+      ->where('loan_masters.payment_completed',0)->get();
+      $due =   LoanDue::where('loan_id', $request->id)->orderBy('id','ASC')->get();
+//echo"<pre>";
+
+
+      $html ='<div class="">
+        <div>
+      <div class="row">
+             <p class="col-md-12 text-center"><b>'.$master[0]->loan_name.'</b></p>
+             <p class="col-md-12">'.$master[0]->name.'-'.$master[0]->employee_id.'</p>
+             <p class="col-md-12">Amount : '.$master[0]->amount.' Due: '.$master[0]->due_month.'</p>
+             <p class="col-md-12">Start Date : '.$master[0]->loan_start_date.' End Date : '.$master[0]->loan_end_date.'</p>
+      </div>
+    <div class="row"><table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Month</th>
+      <th scope="col">Year</th>
+      <th scope="col">EMI</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>';
+    $i=1;
+    foreach ($due as $key => $value) {
+        if($value['payslip_id']==NULL){$td="NOT-DETECTED";}else{$td="DETECTED";}
+
+        //print_r($value);
+       $html .=' <tr>
+      <td scope="">'.$i.'</td>
+      <td>'.date('M',strtotime($value['year']."-".$value['month']."-01")).'</td>
+      <td>'.$value['year'].'</td>
+      <td>'.$value['amount'].'</td>
+      <td>'. $td .'</td>
+      
+      </tr>';
+    $i++;
+    }
+    
+    $html .=' </tbody>
+</table></div>
+   </div>
+  </div>';
+
+ // exit;
+echo $html;
+
+
+    }
+    public function addloanSetup(Request $request){
+
+
+     /*    print_r($request->all());
+        exit;
+ */
+        try {
+            $dt = date('Y-m-d');
+
+$mon = "+".$request->month_due + 1 ." months";
+
+
+
+         $startDate = date('Y-m-d', strtotime("+ 1 months", strtotime($dt))); 
+         $endDate = date('Y-m-d', strtotime($mon, strtotime($dt))); 
+
+
+
+
+
+      
+      $crud = new LoanMaster;  
+      $crud->loan_name =  $request->l_name;  
+      $crud->user_id =  $request->userss;  
+      $crud->amount =  $request->amount;  
+      $crud->due_month =  $request->month_due;
+      $crud->emi_per_monthly = $request->emi_per_month;
+      $crud->loan_start_date = $startDate; 
+      $crud->loan_end_date =  $endDate; 
+      $crud->save();   
+     $mid =  $crud->id;   
+
+      $begin = new DateTime($startDate);
+      $end = new DateTime($endDate);
+
+
+      $interval = DateInterval::createFromDateString('1 months');
+      $period = new DatePeriod($begin, $interval, $end);
+
+      foreach ($period as $dt) {
+        $mont = $dt->format("m");
+        $year = $dt->format("Y");
+
+
+
+        $lod = new LoanDue;  
+        $lod->loan_id =  $mid;  
+        $lod->user_id =  $request->userss;  
+        $lod->amount =  $request->emi_per_month;  
+        $lod->month =  $mont;
+        $lod->year = $year;
+
+        $lod->save();  
+
+
+     
+    }
+    return redirect()
+    ->back()
+    ->with("success", "Loan Deduction Start from ". $startDate = date('M-Y', strtotime("+ 1 months", strtotime(date('Y-m-d'))))." Loan Data added successfully"); 
+
+        } catch (\Exception $th) {
+           
+            return redirect()
+            ->back()
+            ->with("failed", $th->getMessage());
+        }
+
+
+    }
 }

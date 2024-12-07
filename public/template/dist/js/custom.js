@@ -1,3 +1,12 @@
+$(function () {
+  //Initialize Select2 Elements
+ // $('.select2').select2();
+  $('.select2bs4').select2({
+    theme: 'bootstrap4'
+  })
+
+
+});
 $('.edit_comp').click(function (e) { 
  // e.preventDefault();
 
@@ -25,6 +34,37 @@ var request = $.ajax({
     $('#ed_id').val("");
     $('#ed_id').val(value);
     $('#edit_comp').modal('show');
+
+ }
+});
+});
+
+
+$('.sales_cus').change(function (e) { 
+ // e.preventDefault();
+
+var value = $(this).val();
+
+alert(value);
+var request = $.ajax({
+  headers: {
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+},
+  url: "/get-sales-customer",
+  type: "POST",
+  data: {
+        "id": value
+},
+ // dataType: "application/json",
+  success: function(data){
+    var returnedData = JSON.parse(data);
+    gst_number
+   // console.log
+  
+   var gst_number = returnedData[0].gst_number;
+   $('.gst_num').val("");
+   $('.gst_num').val(gst_number);
+   
 
  }
 });
@@ -1059,7 +1099,7 @@ if(value ==  "" ){
 
   alert("Please Select the date");
 }else{
-  alert(value);
+ // alert(value);
   var request = $.ajax({
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1103,6 +1143,7 @@ console.log(data);
 });
 }
 });
+
 $("#lead_dash").click(function(){
   var value = $('#lead_d').val();
 
@@ -1135,3 +1176,317 @@ $(this).prop("disabled", true);
 });
 }
 });
+
+$(".calc").click(function(){
+
+ var ths = $(this);
+
+
+  //var ppm =ths.parents("fieldset").next().find('.paypmonth').val();
+  var ppm =ths.closest("div").prev().find('.paypmonth').val();
+ //$("#me").closest("h3 + div").prev().find('span b');
+
+ //alert(ppm);
+//return false;
+if(ppm > 1000 ){
+
+ var basic =  percentageCalculator(ppm,38);
+ var da =  percentageCalculator(ppm,19);
+ var hra =  percentageCalculator(ppm,28);
+ var conveyance =  percentageCalculator(ppm,7);
+ var cca =  percentageCalculator(ppm,8);
+ //alert(basic);
+ths.closest("fieldset").find('.basic').val(basic);
+ths.closest("fieldset").find('.da').val(da);
+ths.closest("fieldset").find('.hra').val(hra);
+ths.closest("fieldset").find('.conveyance').val(conveyance);
+ths.closest("fieldset").find('.cca').val(cca);
+
+var tot = stot();
+
+
+
+ths.closest("fieldset").find('.stotal').val(tot);
+
+
+
+if(tot > 15000 ){
+  var pf =  percentageCalculator(tot,12);
+  
+
+  ths.closest("fieldset").find('.epf_deduction').val(pf);
+
+}else{
+
+  ths.closest("fieldset").find('.epf_deduction').val(0);
+
+}
+
+if(tot > 21000 ){
+  var esi =  percentageCalculatorDeduction(tot);
+  
+
+  ths.closest("fieldset").find('.esi').val(esi);
+
+}else{
+
+  ths.closest("fieldset").find('.esi').val(0);
+
+}
+
+
+var dsum =0;
+  
+$('.tdedt').each(function(){
+  // this.value == "" || this.value ==null ? tot=0:tot=this.value;
+  dsum += parseFloat(this.value);
+    // console.log("Type of number is:" ,typeof sum);   
+    
+ });
+//var sub_min = $(this).parents('fieldset').find('.sub_min').val(sub);
+var tott = tot - dsum;
+/* var final = total(sub_tot,sub_min)
+alert(final) */
+ths.parents('fieldset').find('.ftotal').val(tott.toFixed(2));
+
+}else{
+
+  alert("Enter more than 1000 Rs");
+  return false;
+
+}
+
+
+
+
+
+});
+function percentageCalculatorDeduction(amount) {   
+  var per = 0.75 ;
+ // console.log(per);
+ // console.log(((per * amount) / 100).toFixed(2));
+  return ((per * amount) / 100).toFixed(2);
+}
+function percentageCalculator(amount, percent) {       
+  return ((percent * amount) / 100).toFixed(2)
+}
+
+$(".income_tax").keyup(function(){
+
+  var tot = stot();
+  var sum = 0;
+  //alert(typeof tot)
+  $('.tdedt').each(function(){
+    // this.value == "" || this.value ==null ? tot=0:tot=this.value;
+       sum += parseFloat(this.value);
+      // console.log("Type of number is:" ,typeof sum);   
+      
+   });
+  var sded = sum;
+
+
+ 
+
+
+  var ftit = tot - sded ;
+  
+  
+  var fvals = ftit==null || ftit == ""?0:ftit;
+  $(this).closest("fieldset").find('.ftotal').val(fvals.toFixed(2));
+});
+$(".bonus").keyup(function(){
+  var sum = 0;
+  var tot = 0;
+  $('.cadd').each(function(){
+  this.value == "" || this.value ==null ? tot=0:tot=this.value;
+
+
+      sum += parseFloat(tot);
+     // console.log("Type of number is:" ,typeof tot);   
+     
+  });
+
+
+
+
+  var sub = 0;
+
+  
+  
+  var sub_tot = $(this).parents('fieldset').find('.stotal').val(sum.toFixed(2));
+
+
+  if(sum > 15000 ){
+    var pf =  percentageCalculator(sum,12);
+    
+  
+    $(this).closest("fieldset").find('.epf_deduction').val(pf);
+  
+  }else{
+    var pf = 0;
+    $(this).closest("fieldset").find('.epf_deduction').val(0);
+  
+  }
+  
+  if(sum > 21000 ){
+    var esi =  percentageCalculator(sum,0.75);
+    
+  
+    $(this).closest("fieldset").find('.esi').val(esi);
+  
+  }else{
+    var esi =  0;
+    $(this).closest("fieldset").find('.esi').val(0);
+  
+  }
+  var dsum =0;
+  
+  $(this).closest("fieldset").find('.tdedt').each(function(){
+    // this.value == "" || this.value ==null ? tot=0:tot=this.value;
+    dsum += parseFloat(this.value);
+      // console.log("Type of number is:" ,typeof sum);   
+      
+   });
+  //var sub_min = $(this).parents('fieldset').find('.sub_min').val(sub);
+  var tot = sum - pf - esi;
+  /* var final = total(sub_tot,sub_min)
+  alert(final) */
+ $(this).parents('fieldset').find('.ftotal').val(tot.toFixed(2));
+  
+  
+  })
+  $(".loan-info").click(function(){
+
+var valid =$(this).val();
+
+var request = $.ajax({
+  headers: {
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+},
+ dataType : 'html',
+  url: "/view-loan",
+  type: "POST",
+  data: {
+        "id": valid
+},   success: function(data){
+
+ // var returnedData = JSON.parse(data);
+
+  $('#append').html(data);
+
+ 
+}
+});
+
+
+  });
+  $("#month_due").keyup(function(){
+      var money = $("#amount").val();
+      var due =$(this).val();
+
+     // alert(due);
+
+      if(money > 0){
+
+        var amt = money / due;
+
+
+      $("#emi_per_month").val(amt.toFixed(2));
+        
+
+      }else{
+
+        alert("Enter the amount");
+      }
+
+
+  });
+  $(".incentive").keyup(function(){
+  var sum = 0;
+  var tot = 0;
+  $('.cadd').each(function(){
+  this.value == "" || this.value ==null ? tot=0:tot=this.value;
+
+
+      sum += parseFloat(tot);
+    //  console.log("Type of number is:" ,typeof tot);   
+     
+  });
+  var sub = 0;
+
+  
+  
+  var sub_tot = $(this).parents('fieldset').find('.stotal').val(sum.toFixed(2));
+  
+  
+  if(sum > 15000 ){
+    var pf =  percentageCalculator(sum,12);
+    
+  
+    $(this).closest("fieldset").find('.epf_deduction').val(pf);
+  
+  }else{
+  
+    $(this).closest("fieldset").find('.epf_deduction').val(0);
+  
+  }
+  
+  if(sum > 21000 ){
+    var esi =  percentageCalculator(sum,0.75);
+    
+  
+    $(this).closest("fieldset").find('.esi').val(esi);
+  
+  }else{
+  
+    $(this).closest("fieldset").find('.esi').val(0);
+  
+  }
+
+  var dsum =0;
+  
+  $('.tdedt').each(function(){
+    // this.value == "" || this.value ==null ? tot=0:tot=this.value;
+    dsum += parseFloat(this.value);
+      // console.log("Type of number is:" ,typeof sum);   
+      
+   });
+  //var sub_min = $(this).parents('fieldset').find('.sub_min').val(sub);
+  var tot = sum - pf - esi;
+  /* var final = total(sub_tot,sub_min)
+  alert(final) */
+ $(this).parents('fieldset').find('.ftotal').val(tot.toFixed(2));
+
+
+
+  })
+
+  function stot() {
+
+    var sum = 0;
+    var tot = 0;
+    $('.cadd').each(function(){
+    
+        sum += parseFloat(this.value);
+     //   console.log("Type of number is:" ,typeof sum);   
+       
+    });
+    
+
+    return sum.toFixed(2);
+  }
+    function sded() {
+
+    var sum = 0;
+    var tot = 0;
+    $('.tdedt').each(function(){
+     // this.value == "" || this.value ==null ? tot=0:tot=this.value;
+        sum += parseFloat(this.value);
+       // console.log("Type of number is:" ,typeof sum);   
+       
+    });
+    
+alert(sum);
+    return sum.toFixed(2);
+  }
+  

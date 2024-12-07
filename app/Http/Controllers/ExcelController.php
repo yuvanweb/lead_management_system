@@ -33,7 +33,10 @@ class ExcelController extends Controller
 
         //  Excel::import( new SalesImport, $request->file('excel_file'));
         } catch (\Exception $e) {
-        // print_r($e->getMessage()); 
+         print_r($e->getMessage()); 
+
+
+        // exit;
 
             return redirect()
     ->back()

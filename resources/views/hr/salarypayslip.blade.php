@@ -23,7 +23,7 @@
       @csrf
     <div class="row">
 <div class="col"><h4>Select Date</h4></div>
-<div class="col"><input type="date" class="form-control" name="date" id="date" required></div>
+<div class="col"><input type="month" class="form-control" name="date"  required></div>
 <div class="col"><button type="submit" class="btn btn-danger text-right">Download Payslip</button></div>
 
     </div>

@@ -73,12 +73,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lead-reports', [LeadController::class, 'reports'])->name('lead-reports'); 
     
     Route::get('/sales', [SalesController::class, 'index'])->name('sales');
+    Route::get('/sales-add', [SalesController::class, 'add'])->name('sales-add');
     Route::post('/add-sales', [SalesController::class, 'addSales'])->name('add-sales');
     Route::post('/get-sales', [SalesController::class, 'getSales'])->name('get-sales');
+    Route::get('/edit-sales/{id}', [SalesController::class, 'editSales'])->name('edit-sales');
+    Route::post('/update-sales', [SalesController::class, 'updateSales'])->name('update-sales');
     Route::get('/sales-dashboard', [SalesController::class, 'dashboard'])->name('sales-dashboard');
     Route::post('/sales-month-dashboard', [SalesController::class, 'monthlyDashboard'])->name('sales-month-dashboard');
 
     Route::get('/sales-reports', [SalesController::class, 'reports'])->name('sales-reports');
+    Route::post('/get-sales-customer', [SalesController::class, 'salesCustomerGst'])->name('sales-reports');
     
 
     
@@ -89,6 +93,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/update-purchase', [PurchaseController::class, 'updatepurchase'])->name('update-purchase');
     Route::get('/delete-purchase/{id}', [PurchaseController::class, 'deletepurchase'])->name('delete-purchase');
     Route::get('/purchase-dashboard', [PurchaseController::class, 'dashboard'])->name('purchase-dashboard');
+    Route::post('/purchase-month-dashboard', [PurchaseController::class, 'monthlyDashboard'])->name('purchase-month-dashboard');
     Route::get('/purchase-reports', [PurchaseController::class, 'reports'])->name('purchase-reports');
 
    Route::get('/customer', [CustomerController::class, 'index'])->name('customer');
@@ -116,12 +121,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::post('/update-attendance', [HrController::class, 'updateAttendance'])->name('update-attendance');
    Route::get('/hr-salarysetup', [HrController::class, 'salarysetup'])->name('hr-salarysetup');
    Route::post('/update-salary-setup', [HrController::class, 'addSalarySetup'])->name('update-salary-setup');
+   Route::get('/calculate-salary-setup/{id}', [HrController::class, 'calculatePayslip'])->name('hr-generatepayslip');
    Route::get('/hr-generatepayslip', [HrController::class, 'generatePayslip'])->name('hr-generatepayslip');
    Route::post('/generate-payslip', [HrController::class, 'generateMonthlyPayslip'])->name('generate-payslip');
    Route::post('/generate-payslip-pdf', [HrController::class, 'generateMonthlyPayslipPdf'])->name('generate-payslip-pdf');
    Route::get('/hr-salarypayslip', [HrController::class, 'salarypayslip'])->name('hr-salarysetup');
    Route::get('/generate-final-payslip/{id}/{date}', [HrController::class, 'generateFinalPayslip'])->name('generate-final-payslip');
    Route::get('/hr-reports', [HrController::class, 'reports'])->name('hr-reports');
+   Route::get('/hr-loansetup', [HrController::class, 'loanSetup'])->name('hr-loansetup');
+   Route::post('/add-Loan-details', [HrController::class, 'addloanSetup'])->name('add-Loan-details');
+   Route::get('/delete-loan/{id}', [HrController::class, 'deleteLoanSetup'])->name('delete-loan');
+   Route::post('/view-loan', [HrController::class, 'viewLoanSetup'])->name('view-loan');
   // Route::get('/hr-reports', [HrController::class, 'reports'])->name('hr-reports');
  
   Route::get('/master-type', [MasterController::class, 'type'])->name('master-type');

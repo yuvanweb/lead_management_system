@@ -53,10 +53,13 @@ class SalesImport implements ToCollection
     $ctatn =  array_flip($ctat);
    // echo"<pre>";
 
-/* echo"<pre>";
-print_r($tn); */
+/*  echo"<pre>";
+print_r($pn); 
+print_r($tn); 
+print_r($ctatn); 
+print_r($fn); 
 
-
+exit; */
  
 $i=0;
         foreach ($rows as $row) 
@@ -76,7 +79,7 @@ $unix_date = ($excel_date - 25569) * 86400;
 
 
  $wordlist = Sales::where('sales_date',gmdate("Y-m-d", $unix_date))->where('company',$cn[$row[1]])->where('product',$pn[$row[3]])
-->where('unit',$un[$row[2]])->where('type',$tn[$row[4]])->where('brand',$bn[$row[5]])->where('color',$cltn[$row[6]])->where('form',$fn[$row[7]])->where('customer',$ctatn[$row[8]])->where('qnt',$row[10])->get();
+->where('unit',$un[$row[2]])->where('type',$tn[$row[4]])->where('brand',$bn[$row[5]])->where('color',$cltn[$row[6]])->where('form',$fn[$row[7]])->where('customer',$ctatn[$row[8]])->where('qnt',$row[9])->get();
   
 
 
@@ -96,7 +99,7 @@ if($wordCount == 0 ){
                 'color' => $cltn[$row[6]],
                 'form' => $fn[$row[7]],
                 'customer' => $ctatn[$row[8]],
-                'qnt' => $row[10],
+                'qnt' => $row[9],
                 'created_at' => gmdate("Y-m-d", $unix_date),
                 'updated_at' => gmdate("Y-m-d", $unix_date),
             );

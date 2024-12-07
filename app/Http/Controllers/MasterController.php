@@ -635,7 +635,7 @@ return $arr;
     $array_company = Customer::where('status',1)->get();
     $arr =[];
     foreach ($array_company as $key => $value) {
-      $arr[$value->id] =$value->customer_name;
+      $arr[$value->id] =$value->gst_number;
     }
     return $arr;
   }  

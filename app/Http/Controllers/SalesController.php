@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Company;
+use App\Models\Customer;
 use App\Models\Form;
 use App\Models\Plant;
 use App\Models\Product;
@@ -57,10 +58,110 @@ class SalesController extends Controller
                 'forms.form_name',
                 'colors.color_name',
                 'types.type_name',
+                'customers.gst_number',
                 'customers.customer_name')
                 ->where('sales.status',1)
                 ->get();
        return view('sales.index')->with('sales',$sales)->with('user',$user)->with('company',$company)->with('plant',$plant)->with('colors',$colors)->with('brand',$brand)->with('form',$form)->with('product',$product)->with('type',$type)->with('unit',$unit)->with('customer',$customer);
+       
+      }  public function add(){
+
+        $company = Company::where('status',1)->get();
+        $plant = Plant::where('status',1)->get();
+        $colors = Color::where('status',1)->get();
+        $brand = Brand::where('status',1)->get();
+        $form = Form::where('status',1)->get();
+        $product = Product::where('status',1)->get();
+        $unit = Unit::where('status',1)->get();
+        $user = User::where('status',1)->get();
+        $type = Type::where('status',1)->get();
+      
+           
+        $customer = DB::table('customers')
+        
+        ->leftJoin('lead_sources', 'customers.converted_lead', '=', 'lead_sources.id')
+        ->leftJoin('categories', 'customers.customer_categoty', '=', 'categories.id')
+        ->select('customers.*', 'lead_sources.l_source_name', 'categories.categorie_name')
+        ->where('customers.status',1)
+        ->get();
+
+
+        $sales = DB::table('sales')
+                
+        ->leftJoin('companies', 'sales.company', '=', 'companies.id')
+        ->leftJoin('products', 'sales.product', '=', 'products.id')
+        ->leftJoin('units', 'sales.unit', '=', 'units.id')
+        ->leftJoin('forms', 'sales.form', '=', 'forms.id')
+        ->leftJoin('colors', 'sales.color', '=', 'colors.id')
+        ->leftJoin('customers', 'sales.customer', '=', 'customers.id')
+        ->leftJoin('types', 'sales.type', '=', 'types.id')
+        ->select('sales.*', 
+                'companies.company_name',
+                'products.product_name',
+                'units.unit_name',
+                'forms.form_name',
+                'colors.color_name',
+                'types.type_name',
+                'customers.gst_number',
+                'customers.customer_name')
+                ->where('sales.status',1)
+                ->get();
+       return view('sales.add')->with('sales',$sales)->with('user',$user)->with('company',$company)->with('plant',$plant)->with('colors',$colors)->with('brand',$brand)->with('form',$form)->with('product',$product)->with('type',$type)->with('unit',$unit)->with('customer',$customer);
+       
+      } 
+       public function editSales(Request $request,$id){
+       // $sales =  Sales::select('sales.*,customer.gst_number')->leftJoin('customers', 'sales.customer', '=', 'customers.id')->where('id',$id)->get();
+
+        $company = Company::where('status',1)->get();
+        $plant = Plant::where('status',1)->get();
+        $colors = Color::where('status',1)->get();
+        $brand = Brand::where('status',1)->get();
+        $form = Form::where('status',1)->get();
+        $product = Product::where('status',1)->get();
+        $unit = Unit::where('status',1)->get();
+        $user = User::where('status',1)->get();
+        $type = Type::where('status',1)->get();
+      
+           
+        $customer = DB::table('customers')
+        
+        ->leftJoin('lead_sources', 'customers.converted_lead', '=', 'lead_sources.id')
+        ->leftJoin('categories', 'customers.customer_categoty', '=', 'categories.id')
+        ->select('customers.*', 'lead_sources.l_source_name', 'categories.categorie_name')
+        ->where('customers.status',1)
+        ->get();
+
+
+       /*  $sales = DB::table('sales')
+                
+        ->leftJoin('companies', 'sales.company', '=', 'companies.id')
+        ->leftJoin('products', 'sales.product', '=', 'products.id')
+        ->leftJoin('units', 'sales.unit', '=', 'units.id')
+        ->leftJoin('forms', 'sales.form', '=', 'forms.id')
+        ->leftJoin('colors', 'sales.color', '=', 'colors.id')
+        ->leftJoin('customers', 'sales.customer', '=', 'customers.id')
+        ->leftJoin('types', 'sales.type', '=', 'types.id')
+        ->select('sales.*', 
+                'companies.company_name',
+                'products.product_name',
+                'units.unit_name',
+                'forms.form_name',
+                'colors.color_name',
+                'types.type_name',
+                'customers.gst_number',
+                'customers.customer_name')
+                ->where('sales.status',1)
+                ->get(); */
+
+                $sales = DB::table('sales')
+                
+                ->leftJoin('customers', 'sales.customer', '=', 'customers.id')
+                
+                ->select('sales.*', 
+                        'customers.gst_number')
+                        ->where('sales.id',$id) 
+                        ->get();
+       return view('sales.edit')->with('sales',$sales)->with('user',$user)->with('company',$company)->with('plant',$plant)->with('colors',$colors)->with('brand',$brand)->with('form',$form)->with('product',$product)->with('type',$type)->with('unit',$unit)->with('customer',$customer);
        
       } 
        
@@ -78,15 +179,44 @@ class SalesController extends Controller
         $customer->color =  $request->color;  
         $customer->form =  $request->form;  
         $customer->customer =  $request->customer;  
+       // $customer->gst_number =  $request->ccode;  
         $customer->qnt = $request->qut; 
         $customer->sales_rep = $request->rep; 
        
         $customer->save();
         return redirect()->back()->with('success', 'Sales data Successfully created');
+       }   
+       public function updateSales(Request $request){
+
+
+        $id= $request->id;
+        $data= array(
+                'sales_date' =>  $request->date,  
+                'company' =>  $request->company,  
+                'product' =>  $request->product,  
+                'unit' =>  $request->unit,  
+                'type' =>  $request->type,  
+                'brand' =>  $request->brand,  
+                'color' =>  $request->color,  
+                'form' =>  $request->form,  
+                'customer' =>  $request->customer,  
+            //    'gst_number' =>  $request->ccode,  
+                'qnt' => $request->qut, 
+                'sales_rep' => $request->rep
+        );
+        Sales::whereId($id)->update($data);
+        return redirect()->back()->with('success', 'Sales data Successfully Updated');
        }  
        public function getSales(Request $request){
     
+
+        /* echo $request->id; 
+        exit; */
         $plant =  Sales::where('id',$request->id)->get();
+
+
+       /*  print_r($plant);
+        exit; */
        echo json_encode($plant);
       }  
 
@@ -217,7 +347,8 @@ $gpgl_diff_type = Sales::select(DB::raw('SUM(sales.qnt) As s_qunty'),'types.type
        } 
  public function monthlyDashboard(Request $request){
 
-        $date = $request->date;
+        /* echo $date = $request->date;
+        exit; */
 
         $month = date('m',strtotime($request->date));
        $year = date('Y',strtotime($request->date));
@@ -366,6 +497,18 @@ $gpgl_diff_type = Sales::select(DB::raw('SUM(sales.qnt) As s_qunty'),'types.type
 
         return view('sales.dashboard')->with('total_qty',$total_qty)->with('brand',$brand)->with('categories',$categories)->with('forms',$forms)->with('unit',$unit)->with('gp_diff_type',$gp_diff_type)->with('gpgl_diff_type',$gpgl_diff_type)->with('comp_qty',$comp_qty)->with('prod_qty',$prod_qty)->with('purchasevssales',$purchasevssales)->with('product_type',$product_type);
        } 
+       
+       public function salesCustomerGst(Request $request){
+
+
+        $id = $request->id;
+
+        $gst = Customer::where('id',$id)->get();
+        echo json_encode($gst);
+
+       
+       }
+       
        
        public function reports(){
         return view('sales.reports');

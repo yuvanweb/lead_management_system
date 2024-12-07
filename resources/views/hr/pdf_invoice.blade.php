@@ -71,12 +71,12 @@
 
                     <tr>
                         <td>Effective Work Days:</td>
-                        <td></td>
+                        <td>{{$days}}</td>
                     </tr>
 
                     <tr>
                         <td>LOP:</td>
-                        <td></td>
+                        <td>{{ $usr->lop}}</td>
                     </tr>
             </table>
 
@@ -112,8 +112,8 @@
                         <td>{{ $usr->pan_number}}</td>
                     </tr>
                     <tr>
-                        <td>Monthly Count</td>
-                        <td>30</td>
+                        <td>Month CTC</td>
+                        <td>{{ $usr->gtotal}}</td>
                     </tr>
               
             </table>
@@ -147,26 +147,43 @@
         <tr class="items">
           <td> HRA </td>
           <td>{{ $usr->hra}}</td>
-          <td> LOP </td>
-          <td>{{ $usr->lop}}</td>
+          <td>Income Tax </td>
+          <td>{{ $usr->income_tax}}</td>
         </tr>
         <tr class="items">
           <td> CONVEYANCE </td>
           <td>{{ $usr->conveyance}}</td>
-          <td></td>
-          <td></td>
+          <td> GROSS DEDUCTION </td>
+          <td>{{ $usr->gross_deduction}}</td>
         </tr>
         <tr class="items">
           <td> CAA </td>
           <td>{{ $usr->cca}}</td>
-          <td></td>
+          <td>LOP Deduction </td>
+          <td>{{ $usr->lop_deduction}}</td>
+        </tr> <tr class="items">
+          <td> Bonus </td>
+          <td>{{ $usr->bonus}}</td>
+          <td> Loan</td>
+          <td>{{ $usr->loan}}</td>
+        </tr> <tr class="items">
+          <td> Incentive </td>
+          <td>{{ $usr->incentive}}</td>
+          <td> Total Deductions</td>
+          <td>{{ $usr->lop_deduction + $usr->gross_deduction + $usr->loan}}</td>
+        </tr><tr class="items">
+          <td> Total Earnings </td>
+          <td>{{  $usr->gtotal}}</td>
+          <td>  </td>
           <td></td>
         </tr>
+       
         <tr class="items">
-          <td> GROSS EARNING </td>
-          <td>{{ $usr->gross_earning}}</td>
-          <td> GROSS DEDUCTION </td>
+          <td>  Net Pay for the month </td>
+          <td>{{ $usr->monthlt_total - $usr->loan}}</td>
+          <td> </td>
           <td></td>
+         
         </tr>
       </table>
       <table class="products" style="width: 100%;border: 1px solid black;">

@@ -175,6 +175,111 @@ $gpgl_diff_type = Purchase::select(DB::raw('SUM(purchases.qnt) As s_qunty'),'typ
 
               
         return view('purchase.dashboard')->with('total_qty',$total_qty)->with('brand',$brand)->with('unit',$unit)->with('gp_diff_type',$gp_diff_type)->with('gpgl_diff_type',$gpgl_diff_type)->with('comp_qty',$comp_qty)->with('prod_qty',$prod_qty)->with('product_type',$product_type);
+       }   
+       public function monthlyDashboard(Request $request){
+
+
+      //  $date = date("Y-m")."-01";
+       
+        $date = $request->date;
+
+        $month = date('m',strtotime($request->date));
+       $year = date('Y',strtotime($request->date));
+       $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+       $from = $year."-".$month."-1";
+       $to = $year."-".$month ."-".$days;
+        $total_qty = Purchase::select(DB::raw('SUM(purchases.qnt) As qunty'))
+                ->leftJoin('companies', 'purchases.company', '=', 'companies.id')
+                ->where('purchases.status',1)
+                ->where('purchases.created_at','>=',$from)
+                ->where('purchases.created_at','<=',$to)
+               // ->groupBy('purchases.company')
+                ->get(); 
+                
+        $comp_qty = Purchase::select(DB::raw('SUM(purchases.qnt) As qunty'),'companies.company_name')
+                ->leftJoin('companies', 'purchases.company', '=', 'companies.id')
+                ->where('purchases.status',1)
+                ->where('purchases.created_at','>=',$date)
+                ->groupBy('purchases.company')->get();
+                        
+        $prod_qty = Purchase::select(DB::raw('SUM(purchases.qnt) As qunty'),'products.product_name')
+                ->leftJoin('products', 'purchases.product', '=', 'products.id')
+                ->where('purchases.status',1)
+                ->where('purchases.created_at','>=',$from)
+                ->where('purchases.created_at','<=',$to)
+                ->groupBy('purchases.product')->get();
+
+
+    
+$product_type = Product::select(DB::raw('SUM(purchases.qnt) As qunty'),'products.product_name')
+->leftJoin('purchases', 'purchases.product', '=', 'products.id')
+->where('purchases.status',1)
+->where('purchases.created_at','>=',$from)
+->where('purchases.created_at','<=',$to)
+->groupBy('products.id')
+->get();
+
+
+
+$product_type = Product::select(DB::raw('SUM(purchases.qnt) As qunty'),'products.product_name')
+->leftJoin('purchases', 'purchases.product', '=', 'products.id')
+->where('purchases.status',1)
+->where('purchases.created_at','>=',$from)
+->where('purchases.created_at','<=',$to)
+->groupBy('products.id')
+->get();
+/* echo"<pre>";
+print_r($product_type);exit; */
+
+
+
+$gp_diff_type = 
+
+
+Purchase::select(DB::raw('SUM(purchases.qnt) As s_qunty'),'types.type_name')
+        ->leftJoin('products', 'purchases.product', '=', 'products.id')
+        ->leftJoin('types', 'purchases.type', '=', 'types.id')
+                ->where('purchases.product',1)
+                ->where('purchases.status',1)
+                ->where('purchases.created_at','>=',$from)
+                ->where('purchases.created_at','<=',$to)
+                ->groupBy('purchases.type')
+                ->get();
+                
+$gpgl_diff_type = Purchase::select(DB::raw('SUM(purchases.qnt) As s_qunty'),'types.type_name')
+        ->leftJoin('products', 'purchases.product', '=', 'products.id')
+        ->leftJoin('types', 'purchases.type', '=', 'types.id')
+                ->where('purchases.product',2)
+                ->where('purchases.status',1)
+                ->where('purchases.created_at','>=',$from)
+                ->where('purchases.created_at','<=',$to)
+                ->groupBy('purchases.type')
+                ->get();
+                
+  
+
+                $unit = Purchase::select(DB::raw('SUM(purchases.qnt) As s_qunty'),'units.unit_name')
+                ->leftJoin('units', 'purchases.unit', '=', 'units.id')
+                ->where('purchases.status',1)
+                ->where('purchases.created_at','>=',$from)
+                ->where('purchases.created_at','<=',$to)
+                ->groupBy('purchases.unit')
+                ->get();
+
+                $brand = Purchase::select(DB::raw('SUM(purchases.qnt) As s_qunty'),'brands.brand_name')
+                ->leftJoin('brands', 'purchases.brand', '=', 'brands.id')
+                ->where('purchases.status',1)
+                ->where('purchases.created_at','>=',$from)
+                ->where('purchases.created_at','<=',$to)
+                ->groupBy('brands.id')
+                ->get();
+
+
+
+
+              
+        return view('purchase.dashboard')->with('total_qty',$total_qty)->with('brand',$brand)->with('unit',$unit)->with('gp_diff_type',$gp_diff_type)->with('gpgl_diff_type',$gpgl_diff_type)->with('comp_qty',$comp_qty)->with('prod_qty',$prod_qty)->with('product_type',$product_type);
        } 
        
        public function reports(){

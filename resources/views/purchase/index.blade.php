@@ -24,7 +24,7 @@
           <div class="card full-wd">
             <div class="card-header">
               <h3 class="card-title">Purchase List</h3><button class="btn btn-primary fl_right" data-toggle="modal" data-target="#modal-lg">Create Purchase</button>
-              <a class="btn btn-success fl_right  px-1" href="/purchase-excel">Upload Excel</a>
+              <a class="btn btn-success fl_right  px-1" href="/purchase-excel">Excel Import</a>
             </div>
             <!-- /.card-header -->
             <div class="card-body">

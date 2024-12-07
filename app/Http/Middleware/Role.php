@@ -18,10 +18,16 @@ class Role
   
         public function handle(Request $request, Closure $next, $role)
     {
+
+
+        $url="";
         if($request->user()->role !== $role){
-            return redirect('/test-session');
+            $url="/test-session";
+            return redirect($url);
+        }else{
+            $url="logout";  
         }
-        return $next($request);
+        return $next($url);
     }
       
 }

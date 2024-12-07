@@ -35,7 +35,7 @@
                       <div class="form-group row">
                       <label for="inputName" class="col-sm-4 col-form-label">Month</label>
                       <div class="col-sm-4">
-                        <input type="date" class="form-control"  name="month_year" id="month_year"  required>
+                        <input type="month" class="form-control"  name="month_year" id="month_year"  required>
                       </div><div class="col-sm-4">
                         <button type="button" id="gen_pay_slip" class="btn btn-info">submit</button>
                        </div>

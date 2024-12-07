@@ -26,7 +26,7 @@
            
             <div class="card">
               <div class="card-head">
-                Sample Excel File format  <div class="text-right"><a class="btn btn-success px-1" href="/sample/sales_sheet.xlsx">Download</a></div>
+                Sample Excel File format  <div class="text-right"><a class="btn btn-success px-1" href="/sample/sales_sheet.xlsx">Download Template</a></div>
               </div>
               <div class="card-body text-danger">
           
